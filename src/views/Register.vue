@@ -1,24 +1,30 @@
 <template>
   <div class="home">
     <div>
+      <el-container class="login">
+        <el-header>
+          <div style="width:100%;height:60px;
+        position: fixed !important;top: 0px;left: 0px;">
+            <el-page-header
+              @back="back"
+              content="注册页面"
+            >
+            </el-page-header>
+          </div>
+        </el-header>
+      </el-container>
       <div class="containerall">
         <div class="containerimg"></div>
         <div class="container">
           <div style="margin-top: 27px;">
-            <h1 style="margin-left: 32%">狗眼电影</h1>
-            <el-input class="el_input" v-model="input_username" placeholder="请输入账号" style="width: 80%; padding-left: 45px;"></el-input>
-            <el-input class="el_input" v-model="input_password" placeholder="请输入密码" style="width: 80%; padding-left: 45px;" type="password"></el-input>
-            <el-select v-model="value" placeholder="请选择" @change="selectProductType"
-              style="margin:20px 140px 0 0;width: 80%; padding-left: 45px;">
-              <el-option v-for="item in options" :key="item.value" :label="item.label"
-                :value="{ label: item.value, value: item.label }">
-              </el-option>
-            </el-select>
+            <h1 style="margin-left: 22%">创建一个新账户</h1>
+            <el-input class="el_input" v-model="input_username" placeholder="请输入账号" style="width: 80%;padding-left: 45px;"></el-input>
+            <el-input class="el_input" v-model="input_password" placeholder="请输入密码" style="width: 80%;padding-left: 45px;" type="password"></el-input>
+            <el-input class="el_input" v-model="input_password_again" placeholder="请确认密码" style="width: 80%;padding-left: 45px;" type="password"></el-input>
+            <el-input class="el_input" v-model="input_phoneNumber" placeholder="请输入电话号码" style="width: 80%;padding-left: 45px;" type="password"></el-input>
             <div class="btn_1" style="display: flex;">
-              <Vcode :show="isShow" @success="success" @close="close" />
-              <div class="h-button submit" @click="submit">登录</div>
-              <div class="h-button submit" @click="register">注册</div>
-              <div class="h-button submit">游客登录</div>
+              <div class="h-button submit" @click="Register" style="margin-left: 40%">注册</div>
+<!--              <div class="h-button submit" @click="back">返回</div>-->
             </div>
           </div>
         </div>
@@ -37,95 +43,49 @@
         <div class="square" style="--d: 9"></div>
       </div>
     </div>
-</div>
+  </div>
 </template>
+
 <script>
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
-import Vcode from "vue-puzzle-vcode";
-import md5 from 'js-md5';
 import $ from 'jquery'
 export default {
   name: 'HomeView',
   data() {
     return {
-      tokenMd5:'',
-      isShow: false,
       input_username: '',
       input_password: '',
-      options: [{
-        value: '选项1',
-        label: '管理员'
-      }, {
-        value: '选项2',
-        label: '用户'
-      }, {
-        value: '选项3',
-        label: '游客登录'
-      }],
-      value: ''
+      input_password_again:'',
+      input_phoneNumber:''
     }
   },
   methods: {
-    selectProductType(data) {
-      // 将data对象解构
-      const { value, label } = data;
-      this.label = label;
-      this.value = value;
-      console.log(this.value);
-    },
-    register(){
-      this.$router.push('/register')
-    },
-    submit() {
-      if(this.input_username === ''||this.input_password === ''){
-        this.$alert('账号或密码未输入', '登录提示', {
-          confirmButtonText: '确定',
-        })
-      }else {
-        this.isShow = true;
-      }
-    },
-    // 用户通过了验证开始登录校验
-    success(msg) {
-      this.isShow = false; // 通过验证后，隐藏模态框
+    Register(){
       this.$axios({
         // 默认请求方式为get
         method: 'post',
-        url:"/local/login",
+        url:"/local/register",
         params:{
           userName: this.input_username,
           password: this.input_password,
-          userRole: this.value,
+          phoneNumber: this.input_phoneNumber,
         },
         responseType: 'json'
       }).then(
         (response) => {
           if (response.data.success == true) {
-            this.tokenMd5 = md5(this.input_username+this.input_password)
-            sessionStorage.setItem("token", this.tokenMd5);
-            $(".container1").css("display", "");
-            $("body").css("background", "#222");
-            $(".containerall").css("display", "none");
-            this.$router.push('/Index')
-          } else  {
-            console.log("response.data.success"+response.data.success)
-            this.$alert('账号或密码错误', '登录提示', {
-              confirmButtonText: '确定',
-            })
-          }
-        }
-      )
+              alert("注册成功")
+          }})
     },
-    // 用户点击遮罩层，应该关闭模态框
-    close() {
-      this.isShow = false;
+    back(){
+      this.$router.push('/login')
     },
-
   },
   components: {
-    Vcode,
     HelloWorld,
+  },
+  mounted() {
   }
 }
 // 蜘蛛网效果
@@ -172,11 +132,22 @@ export default {
     i()
   }, 100)
 }();
+
+
 </script>
 <style>
 @import '../views/views_css/btn_1.css';
+.login .el-page-header {
+  color: white;
+  line-height: 60px;
+  margin-left: 20px;
+}
+.login .el-page-header__content {
+  color: white;
+}
 
-body {
+
+.body {
   background-image: url(../assets/groundback.jpg);
   background-size: 100% 100%;
   background-position: center;
