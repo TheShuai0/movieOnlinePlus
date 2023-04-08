@@ -1,0 +1,35 @@
+.movies {
+    margin-top: 10%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.movie {
+    border-radius: 8px;
+    padding: 10%;
+    text-align: center;
+    margin-right: 5%;
+
+
+}
+
+.movie:last-child {
+    margin-right: 0;
+}
+.movie-poster {
+    border-radius: 7%;
+    max-width: 80%;
+    max-height: 80%;
+}
+
+.movie-name {
+    height: 20%;
+    line-height: 1.2;
+}
+
+.loading {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}

@@ -1,17 +1,20 @@
-import LoginView from '../views/LoginView.vue'
+import Login from "@/views/Login.vue";
 import VueRouter from 'vue-router'
 import Vue from 'vue'
-import Index from '../views/Index.vue'
+import Index from "@/views/Index.vue";
 import Register from "@/views/Register.vue";
+import User from "@/views/User.vue";
 import $ from "jquery";
+
 
 Vue.use(VueRouter)
 
 const routes = [
+
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: Login
   },
   {
     path: '/index',
@@ -23,7 +26,13 @@ const routes = [
     name: "register", //是这个路由的名字
     component: Register
   },
+  {
+    path: '/user',
+    name: 'user',
+    component: User
+  },
 ]
+
 Vue.use(VueRouter)
 const router = new VueRouter({
   routes
@@ -38,9 +47,13 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login'||to.path === '/register') {
     return next();
   }
+  if (to.path === '/'){
+    return next('/login');
+  }
   //获取token
-  const tokenStr = window.sessionStorage.getItem('token');
-  if (!tokenStr) {
+  const f = localStorage.getItem("token")
+  console.log("iii"+f)
+  if (f === null || f === "") {
     return next('/login');
   } else {
     next();

@@ -16,15 +16,45 @@
       <div class="containerall">
         <div class="containerimg"></div>
         <div class="container">
-          <div style="margin-top: 27px;">
-            <h1 style="margin-left: 22%">创建一个新账户</h1>
-            <el-input class="el_input" v-model="input_username" placeholder="请输入账号" style="width: 80%;padding-left: 45px;"></el-input>
-            <el-input class="el_input" v-model="input_password" placeholder="请输入密码" style="width: 80%;padding-left: 45px;" type="password"></el-input>
-            <el-input class="el_input" v-model="input_password_again" placeholder="请确认密码" style="width: 80%;padding-left: 45px;" type="password"></el-input>
-            <el-input class="el_input" v-model="input_phoneNumber" placeholder="请输入电话号码" style="width: 80%;padding-left: 45px;" type="password"></el-input>
+          <div>
+            <h1 style="margin-left: 22%;height: 30px;">创建一个新账户</h1>
+            <div>
+              <i class="iconfont icon-wode"style="margin-left: 5%;font-size: 22px;border: none;">&#xe64a;</i>
+              <el-input class="el_input" v-model="input_username" placeholder="请输入账号" clearable
+                      style="width: 69%;padding-left: 1px;"></el-input>
+              <el-tooltip
+                effect="light"
+                placement="right"
+              >
+                <template #content> 用户名只能包含数字与英文<br />长度在 8 - 16 字之间<br />不可包含特殊符号</template>
+                <i class="iconfont icon-wenhao"style="margin-left: 5%;font-size: 22px;border: none;">&#xe64a;</i>
+              </el-tooltip>
+            </div>
+            <div>
+              <i class="iconfont icon-suo"style="margin-left: 5%;font-size: 22px;border: none;">&#xe64a;</i>
+              <el-input class="el_input" v-model="input_password" placeholder="请输入密码" show-password
+                      style="width: 69%;padding-left: 1px;" type="password"></el-input>
+              <el-tooltip
+                effect="light"
+                placement="right"
+              >
+                <template #content> 密码只能包含数字与英文<br />长度在 8 - 16 字之间<br />特殊符号只可用 @ _ </template>
+                <i class="iconfont icon-wenhao"style="margin-left: 5%;font-size: 22px;border: none;">&#xe64a;</i>
+              </el-tooltip>
+            </div>
+            <div>
+              <i class="iconfont icon-suo"style="margin-left: 5%;font-size: 22px;border: none;">&#xe64a;</i>
+              <el-input class="el_input" v-model="input_password_again" placeholder="请再次输入密码" show-password
+                      style="width: 69%;padding-left: 1px;" type="password"></el-input>
+            </div>
+            <div>
+              <i class="iconfont icon-dianhua"style="margin-left: 5%;font-size: 22px;border: none;">&#xe64a;</i>
+              <el-input class="el_input" v-model="input_phoneNumber" placeholder="请输入电话号码" clearable
+                      style="width: 69%;padding-left: 1px;" ></el-input>
+            </div>
             <div class="btn_1" style="display: flex;">
               <div class="h-button submit" @click="Register" style="margin-left: 40%">注册</div>
-<!--              <div class="h-button submit" @click="back">返回</div>-->
+              <!--              <div class="h-button submit" @click="back">返回</div>-->
             </div>
           </div>
         </div>
@@ -56,29 +86,72 @@ export default {
     return {
       input_username: '',
       input_password: '',
-      input_password_again:'',
-      input_phoneNumber:''
+      input_password_again: '',
+      input_phoneNumber: ''
     }
   },
   methods: {
-    Register(){
-      this.$axios({
-        // 默认请求方式为get
-        method: 'post',
-        url:"/local/register",
-        params:{
-          userName: this.input_username,
-          password: this.input_password,
-          phoneNumber: this.input_phoneNumber,
-        },
-        responseType: 'json'
-      }).then(
-        (response) => {
-          if (response.data.success == true) {
-              alert("注册成功")
-          }})
+    hasUserName(str) {
+    return /[^a-zA-Z0-9]/.test(str);
     },
-    back(){
+    hasPassword(str) {
+      return /[^a-zA-Z0-9@_]/.test(str);
+    },
+    checkLogin(input_username,input_password,input_password_again,input_phoneNumber){
+      if (input_username == '' || input_password == '' || input_password_again == '') {
+        return '账号或密码不可为空'
+      }else if(this.hasUserName(input_username)){
+        return '账号不可包含特殊字符'
+      }else if (input_username.length<8||input_username.length>16
+        ||input_password.length<8||input_password.length>16){
+        return '账号与密码长度应在8-16字之间'
+      }else if(input_password != input_password_again){
+        return '两次输入的密码不一致'
+      }else if(this.hasPassword(input_password)||this.hasPassword(input_password_again)){
+        return '密码不可包含除 @ _ 以外的特殊字符'
+      }else if (input_phoneNumber.length != 11) {
+        return '手机号填写错误'
+      }else {
+        return '校验通过'
+      }
+    },
+    Register() {
+      console.log()
+    const checkStr = this.checkLogin(this.input_username,this.input_password,this.input_password_again,this.input_phoneNumber)
+        if (checkStr != '校验通过'){
+          this.$alert(checkStr, '注册提示', {
+            confirmButtonText: '确定',
+          })
+        }else {
+          if (this.input_phoneNumber.length)
+            this.$axios({
+              // 默认请求方式为get
+              method: 'post',
+              url: "/local/register",
+              params: {
+                userName: this.input_username,
+                password: this.input_password,
+                phoneNumber: this.input_phoneNumber,
+              },
+              responseType: 'json'
+            }).then(
+              (response) => {
+                if (response.data.success == true) {
+                  this.$alert('注册成功', '注册提示', {
+                    confirmButtonText: '确定',
+                  })
+                  this.$router.push('/login')
+                }else if (response.data.success == true){
+                  this.$alert('该用户名已被使用', '注册提示', {
+                    confirmButtonText: '确定',
+                  })
+                }
+              }).catch((response) => {
+              console.log(9999)
+            })
+        }
+    },
+    back() {
       this.$router.push('/login')
     },
   },
@@ -86,7 +159,7 @@ export default {
     HelloWorld,
   },
   mounted() {
-  }
+  },
 }
 // 蜘蛛网效果
 !function () {
@@ -100,7 +173,7 @@ export default {
 
   function t() {
     var t = e("script"), o = t.length, i = t[o - 1];
-    return { l: o, z: n(i, "zIndex", -1), o: n(i, "opacity", .5), c: n(i, "color", "0,0,0"), n: n(i, "count", 99) }
+    return {l: o, z: n(i, "zIndex", -1), o: n(i, "opacity", .5), c: n(i, "color", "0,0,0"), n: n(i, "count", 99)}
   }
 
   function o() {
@@ -118,7 +191,7 @@ export default {
   var a, c, u, m = document.createElement("canvas"), d = t(), l = "c_n" + d.l, r = m.getContext("2d"),
     x = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (n) {
       window.setTimeout(n, 1e3 / 45)
-    }, w = Math.random, y = { x: null, y: null, max: 2e4 };
+    }, w = Math.random, y = {x: null, y: null, max: 2e4};
   m.id = l, m.style.cssText = "position:fixed;top:0;left:0;z-index:" + d.z + ";opacity:" + d.o, e("body")[0].appendChild(m), o(), window.onresize = o, window.onmousemove = function (n) {
     n = n || window.event, y.x = n.clientX, y.y = n.clientY
   }, window.onmouseout = function () {
@@ -126,7 +199,7 @@ export default {
   };
   for (var s = [], f = 0; d.n > f; f++) {
     var h = w() * a, g = w() * c, v = 2 * w() - 1, p = 2 * w() - 1;
-    s.push({ x: h, y: g, xa: v, ya: p, max: 6e3 })
+    s.push({x: h, y: g, xa: v, ya: p, max: 6e3})
   }
   u = s.concat([y]), setTimeout(function () {
     i()
@@ -135,20 +208,22 @@ export default {
 
 
 </script>
-<style>
+<style >
 @import '../views/views_css/btn_1.css';
+
 .login .el-page-header {
   color: white;
   line-height: 60px;
   margin-left: 20px;
 }
+
 .login .el-page-header__content {
   color: white;
 }
 
 
 .body {
-  background-image: url(../assets/groundback.jpg);
+  background-image: url(../assets/groundback.jpg)!important;
   background-size: 100% 100%;
   background-position: center;
   background-attachment: fixed;
