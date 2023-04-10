@@ -1,8 +1,4 @@
-<template>
-  <div id="app">
-    <router-view />
-  </div>
-</template>
+<template><div id="app"><router-view /></div></template>
 <script>
 import $ from "jquery";
 export default {
@@ -12,9 +8,8 @@ export default {
   methods:{
   },
   mounted() {
+    }
   }
-}
 </script>
 <style>
 </style>
-

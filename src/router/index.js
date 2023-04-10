@@ -4,6 +4,9 @@ import Vue from 'vue'
 import Index from "@/views/Index.vue";
 import Register from "@/views/Register.vue";
 import User from "@/views/User.vue";
+import MovieDetail from "@/views/MovieDetail.vue";
+import MovieUrl from "@/views/MovieUrl.vue";
+import MovieCollect from "@/views/MovieCollect.vue";
 import $ from "jquery";
 
 
@@ -30,6 +33,20 @@ const routes = [
     path: '/user',
     name: 'user',
     component: User
+  },
+  {
+    path: '/movieDetail',
+    name: 'movieDetail',
+    component: MovieDetail
+  },
+  {
+    path: '/movieUrl',
+    name: 'movieUrl',
+    component: MovieUrl
+  },{
+    path: '/movieCollect',
+    name: 'movieCollect',
+    component: MovieCollect
   },
 ]
 

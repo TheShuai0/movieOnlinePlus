@@ -1,64 +1,129 @@
 <template>
-  <div class='homepage'>
+  <div>
     <Header></Header>
-    <div class="content">
-      <div class='box' id='box1'></div>
-      <div class='box' id='box2'> </div>
-      <p>{{sign}}</p>
-      <div class='box' id='box3'></div>
-      <div class='box' id='box4'></div>
-    </div>
-
-    <div class="h-user">
-      <div class="h-info clearfix">
-        <div class="avatar-container">
-          <div>
-            <div class="bili-avatar" style="width: 60px;height:60px;">
-              <img class="bili-avatar-img bili-avatar-face bili-avatar-img-radius" data-src="https://i1.hdslb.com/bfs/face/3840f1275fbd54c43182b5e58ca86236d428c487.jpg@240w_240h_1c_1s.webp" alt="" src="">
-              <span class="bili-avatar-icon bili-avatar-right-icon  bili-avatar-size-60"></span>
-            </div>
-          </div>
-          <a target="_blank" href="https://account.bilibili.com/account/face/upload?spm_id_from=333.999.0.0" class="avatar-cover">更换头像</a></div>
-          <div class="h-basic">
-
-              <span id="h-name">纯阳的雪下得有些喧嚣</span>
-              <span id="h-ceritification" class="icon"></span>
-              <span id="h-gender" class="icon gender male"></span>
-              <div class="h-vipType disable">大会员
-              </div>
-              <div class="space-fans-medal">
-              <div class="normal-medal">
-              <div class="normal-left">
-              </div>
-              <div class="normal-right"><p>粉丝勋章</p>
-              </div>
-            </div>
-          </div>
+    <div class="PersonTop">
+      <div class="PersonTop_img">
+        <img  :src="getImageUrl(detailList.pic_name)" />
       </div>
-        <div class="h-basic-spacing">
-          <h4 title="你好啊" class="h-sign" style="display: none;">你好啊</h4>
-          <input id="h-sign" type="text" placeholder="编辑个性签名" maxlength="60" class="space_input"></div></div>
+      <div class="PersonTop_text">
+        <div class="user_text">
+          <div class="user_name">
+            <span> {{ detailList.name }} </span>
+          </div>
+          <div class="user_qianming" >
+            <span> {{ detailList.des }}</span>
+          </div>
+          <div class="user_anniu">
+            <el-button
+              class="el-icon-edit"
+              style="padding: 7px 10px;
+              font-size: 11px;"
+              type="primary"
+              size="medium"
+              plain
+              @click="edit"
+            >编辑</el-button
+            >
+          </div>
+        </div>
+        <div class="user_num">
+          <div style="cursor: pointer" @click="myfan">
+            <span class="num_text">年龄</span>
+            <div class="num_number">{{ detailList.age }}</div>
+          </div>
+          <div>
+            <span class="num_text">邮箱</span>
+            <div class="num_number">{{ detailList.email }}</div>
+          </div>
+          <div>
+            <span class="num_text">手机</span>
+            <div class="num_number">{{ detailList.phone }}</div>
+
+          </div>
         </div>
       </div>
     </div>
+    <div class="person_body">
+      <div class="person_body_left">
+        <el-card class="box-card" :body-style="{ padding: '0px' }">
+          <div slot="header" class="clearfix">
+            <span class="person_body_list" style="border-bottom: none"
+            >个人中心</span
+            >
+          </div>
+        </el-card>
+      </div>
+      <div class="person_body_right" style="height: 500px;">
 
+      </div>
+    </div>
 
+  </div>
 </template>
 
 <script>
+
 import Header from './Header.vue';
+
 export default {
-  name : 'User',
-  data () {
+  name: "userDetail",
+  data() {
     return {
-      sign: '专注web前端开发 '
-    }
+      detailList: {
+        id:"5",
+        name: "John Doe",
+        age: 15,
+        phone: "13957071523",
+        email: "johndoe@example.com",
+        des: "我有一个梦想",
+        pic_name: "img_3.png",
+        favorite_id:"",
+        hobby:"",
+        hobby_id:"",
+        user_role:""
+      }
+    };
+  },
+
+  methods: {
+    getImageUrl(user_img) {
+      return require(`@/assets/user_img/${user_img}`)
+    },
+    getUserDetail(){
+      this.$axios({
+        // 默认请求方式为get
+        method: 'post',
+        url:"/user/getUserDetail",
+        responseType: 'json',
+        params:{token:localStorage.getItem("token")},
+        headers: {
+          'Content-Type': "application/json;charset=UTF-8",
+          'token': localStorage.getItem("token")
+        },
+      }).then(
+        (response) => {
+          if(response.data.code === "1101"){
+            alert(response.data.msg)
+            localStorage.removeItem("token")
+          }
+          this.detailList =  response.data.data
+        })
+    },
+    myfan() {
+
+    },
+    edit() {
+    },
+  },
+  mounted() {
+    this.getUserDetail()
   },
   components: {
-    Header
+    Header,
   },
-}
+};
 </script>
+
 <style>
 @import '../views/views_css/User.css';
 </style>
