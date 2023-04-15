@@ -10,7 +10,7 @@
 import {throttle} from '../lib/utils'
 import MovieShow from './MovieShow.vue';
 import Header from './Header.vue';
-import Float from './Float.vue'
+import Float from './Float.vue';
 import $ from "jquery";
 
 export default {

@@ -1,0 +1,35 @@
+.rank{
+    background-color: #ffffffe6;
+    padding: 10px;
+}
+.beijing{
+    background-color: rgba(239, 235, 239, 0.74);
+}
+.el-tabs--border-card {
+    background-color: rgba(239, 235, 239, 0.74);
+
+    border: unset;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%), 0 0 6px 0 rgb(0 0 0 / 4%);
+}
+
+.el-tabs--border-card>.el-tabs__header {
+
+    background-color: #fff;
+    border-bottom: 1px solid #E4E7ED;
+    /* margin: 0; */
+}
+
+.el-tabs--border-card>.el-tabs__content {
+    padding:unset;
+}
+
+.star {
+    font-size: 16px; /* 设置星星的大小 */
+}
+
+.paiming{
+    margin-top: 5%;
+    font-size: 20px;
+    font-weight: 900;
+    color: #10c5e2;
+}

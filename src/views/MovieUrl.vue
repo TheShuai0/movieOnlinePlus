@@ -5,19 +5,22 @@
         <div class="big-picture">
           <img :src="getImageUrl(this.pic_url)">
         </div>
-        <div class="left-Introduction">
-          <div class="title-box">
-            <h2>{{movieurl[0].name}}</h2>
-            <hr>
+        <div class="left-Introduction" >
+          <el-col span:12 class="title-box" >
+            <h2 >{{movieurl[0].name}}</h2>
+          </el-col>
+          <el-col span:8 >
+          <el-tooltip v-if="this.scoreShow" content="我要对这部电影评分" placement="top">
+          <div class="block"  style="margin-top: -30px;margin-left:400px;" >
+            <el-rate  v-model="movieScoreShow" allow-half text-color="#ff9900" show-score score-template="{value}" @change="chooseScore()"></el-rate>
           </div>
-
+          </el-tooltip>
+          </el-col>
+      <hr>
           <div class="text-box" style = " margin-top: 3%;height: 370px;">
-            <div class="introduce-box">
-                <div style="padding: 5px">{{movieurl[0].name}}</div>
-              </div>
               <div style="height: 135px;padding: 5px">
                 <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto;height: 322px;">
-                  <li v-for="(url, index) in movieurl" :key="index" class="infinite-list-item"
+                  <li v-for="(url, index) in movieurl" :key="index" class="infinite-list-item movie-container "
                       style="cursor: pointer;border-radius:17px;background-color: #0706067a;" @click="GoNewMovie(url.url)">
                       <div>{{url.name}}播放地址{{index+1}}</div>
                     </li>
@@ -46,6 +49,9 @@ export default {
   name: "movieUrl",
   data() {
     return {
+      movieScoreShow:0,
+      scoreShow:true,
+      value: null,
         movie_id:'',
         pic_url:'',
         movieurl: [{
@@ -71,6 +77,30 @@ export default {
         },]
     }},
   methods: {
+    chooseScore(){
+      this.$axios({
+        // 默认请求方式为get
+        method: 'post',
+        url:"/user/addUserScore",
+        responseType: 'json',
+        params:{userScore:this.movieScoreShow,token:localStorage.getItem("token"),movieId:this.movieId},
+        headers: {
+          'Content-Type': "application/json;charset=UTF-8",
+          'token': localStorage.getItem("token")
+        },
+      }).then(
+        (response) => {
+          if(response.data.code === "1101"){
+            alert(response.data.msg)
+            localStorage.removeItem("token")
+          }
+          this.$message({
+            showClose: true,
+            message: '评分成功',
+            type: 'success'
+          });
+        })
+    },
     getImageUrl(pic_name) {
       return require(`@/assets/images/${pic_name}`)
     },
@@ -78,7 +108,6 @@ export default {
       window.open(url)
     },
     getMovieUrl(movieId){
-      console.log("movieId"+movieId)
       this.$axios({
         // 默认请求方式为get
         method: 'post',
@@ -97,14 +126,36 @@ export default {
           }
           this.movieurl =  response.data.data
         })
+    },
+    getScore(movieId){
+      this.$axios({
+        // 默认请求方式为get
+        method: 'post',
+        url:"/user/getScore",
+        responseType: 'json',
+        params:{token:localStorage.getItem("token"),movieId:movieId},
+        headers: {
+          'Content-Type': "application/json;charset=UTF-8",
+          'token': localStorage.getItem("token")
+        },
+      }).then(
+        (response) => {
+          if(response.data.code === "1101"){
+            alert(response.data.msg)
+            localStorage.removeItem("token")
+          }
+          this.movieScoreShow =  response.data.data
+        })
     }
   },
   components: {
     Header,
   },
   mounted() {
+
     this.movieId = Cookies.get('movieId')
     this.pic_url = Cookies.get('pic_url')
+    this.getScore(this.movieId)
     this.getMovieUrl(this.movieId)
     },
 

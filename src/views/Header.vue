@@ -4,12 +4,12 @@
       <el-menu-item index="1" style="margin-left: -20%" @click="MovieByType('')">首页</el-menu-item>
       <el-submenu index="2">
         <template slot="title">影片库</template>
-        <el-menu-item v-for="(type, index) in typeList" :key="index" :index="'2-' + (index + 1)"
+        <el-menu-item style ="height: 10px" v-for="(type, index) in typeList" :key="index" :index="'2-' + (index + 1)"
                       @click="MovieByType(type.type)">{{type.type}}</el-menu-item>
       </el-submenu>
-      <el-menu-item index="3">论坛</el-menu-item>
-      <el-menu-item index="4">排行榜</el-menu-item>
-      <div class="jsx-1273643155 search-box show-suggestion">
+      <el-menu-item index="3" @click="gotoForum()">论坛</el-menu-item>
+      <el-menu-item index="4" @click="gotoRank()">排行榜</el-menu-item>
+      <div id="select" class="jsx-1273643155 search-box show-suggestion">
         <input type="text" placeholder="喜剧 / 科幻 / 奇幻 / 古装 ..."
                class="jsx-1273643155 search-field" value="" v-model="searchMovie">
         <div class="jsx-1273643155 search-button"><span class="jsx-1273643155 iconfont icon-search"
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import $ from "jquery";
 import {throttle} from "@/lib/utils";
 import { EventBus } from '@/Utils/EventBus';
 export default {
@@ -84,6 +85,12 @@ export default {
     }
   },
   methods:{
+    gotoForum(){
+      this.$router.push('/forum')
+    },
+    gotoRank(){
+      this.$router.push('/movieRank')
+    },
     //退出登录
     loginOut(){
       this.$router.push('/login')

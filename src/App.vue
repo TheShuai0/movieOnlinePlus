@@ -12,4 +12,7 @@ export default {
   }
 </script>
 <style>
+{
+  font-family: "Microsoft YaHei";
+}
 </style>

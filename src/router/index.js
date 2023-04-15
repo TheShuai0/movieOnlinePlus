@@ -7,6 +7,10 @@ import User from "@/views/User.vue";
 import MovieDetail from "@/views/MovieDetail.vue";
 import MovieUrl from "@/views/MovieUrl.vue";
 import MovieCollect from "@/views/MovieCollect.vue";
+import MovieRank from "@/views/MovieRank.vue";
+import Forum from "@/views/Forum.vue";
+import ForumDetail from "@/views/ForumDetail.vue";
+
 import $ from "jquery";
 
 
@@ -47,6 +51,19 @@ const routes = [
     path: '/movieCollect',
     name: 'movieCollect',
     component: MovieCollect
+  },
+  {
+    path: '/movieRank',
+    name: 'movieRank',
+    component: MovieRank
+  },{
+    path: '/forum',
+    name: 'forum',
+    component: Forum
+  },,{
+    path: '/forumDetail',
+    name: 'forumDetail',
+    component: ForumDetail
   },
 ]
 

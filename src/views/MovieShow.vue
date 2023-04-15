@@ -16,7 +16,7 @@
             <img :src="getImageUrl(movie.pic_name)" alt="Movie poster" class="movie-poster">
           <div class="movie-name">{{ movie.name }}</div>
           <div style="float:left"><el-rate :value="movie.score" :disabled="true" :max="5" class="star" /></div>
-          <div>{{ movie.score*2 }}</div>
+          <div>{{ movie.score }}</div>
         </div>
       </el-col>
     <div v-if="loading" class="loading">Loading...</div>

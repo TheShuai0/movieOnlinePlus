@@ -1,23 +1,26 @@
 <template>
+  <div>
+    <Header></Header>
+    <Float></Float>
   <div class="beijing">
     <div style="width: 80%;margin: 29px 8% auto;margin-top: 24px">
-
+      <div class="PersonTop" style="margin-top: -7%;height: 94px;background-color: #ffffffb5">
+      <h1 style="height: 50px; margin: auto; text-align: center;">我的收藏夾</h1>
+      </div>
     </div>
-
-
     <!--电影列表-->
     <div class="movies">
-      <el-col :span="4" v-for="(movie, index) in displayedMovies" :key="index">
+      <el-col :span="4" v-for="(movie, index) in movies" :key="index">
         <div class="movie" @click="goToDetailPage(movie.id)" style="cursor: pointer;">
             <img :src="getImageUrl(movie.pic_name)" alt="Movie poster" class="movie-poster">
           <div class="movie-name">{{ movie.name }}</div>
           <div style="float:left"><el-rate :value="movie.score" :disabled="true" :max="5" class="star" /></div>
-          <div>{{ movie.score*2 }}</div>
+          <div>{{ movie.score }}</div>
         </div>
       </el-col>
     <div v-if="loading" class="loading">Loading...</div>
     </div>
-
+  </div>
   </div>
 </template>
 <script>
@@ -27,8 +30,11 @@ import { InfiniteScroll } from 'v-infinite-scroll';
 import 'element-ui/lib/theme-chalk/index.css'
 import { EventBus } from '@/Utils/EventBus';
 import Cookies from 'js-cookie'
+import Header from "@/views/Header.vue";
+import Float from "@/views/Float.vue";
+import MovieShow from "@/views/MovieShow.vue";
 export default {
-  name: 'MovieShow',
+  name: 'MovieCollect',
   directives: {
     InfiniteScroll
   },
@@ -91,14 +97,6 @@ export default {
       this.$router.push('/movieDetail')
     },
     //动态加载
-      loadMore() {
-      this.loading = true;
-      setTimeout(() => {
-        this.page++;
-        this.displayedMovies = this.movies.slice(0, this.page * this.pageSize);
-        this.loading = false;
-      }, 200);
-    },
     cancelEvent() {
       console.log('cancel!')
     },
@@ -123,6 +121,7 @@ export default {
         method: 'post',
         url:"/user/getUserCollect",
         responseType: 'json',
+        params:{token:localStorage.getItem("token")},
         headers: {
           'Content-Type': "application/json;charset=UTF-8",
           'token': localStorage.getItem("token")
@@ -143,24 +142,14 @@ export default {
   },
 
   mounted() {
+    document.getElementById('select').style.display='none';
     this.getMovie();
-    this.loadMore();
-    window.addEventListener('scroll', () => {
-      if (
-        window.innerHeight + window.pageYOffset >= document.body.offsetHeight - 500 &&
-        !this.loading &&
-        this.displayedMovies.length < this.movies.length
-      ) {
-        this.loadMore();
-      }
-    });
   },
   created() {
-    this.displayedMovies = this.movies.slice(0, this.pageSize);
-    EventBus.$on('movies-updated', movies => {
-      this.movies = movies;
-      this.displayedMovies = this.movies.slice(0, this.pageSize);
-    });
+  },
+  components: {
+    Header,
+    Float,
   },
 }
 </script>
