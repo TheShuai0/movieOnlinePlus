@@ -1,6 +1,7 @@
 <template>
   <div>
     <Header></Header>
+    <Float></Float>
     <div class="big-box" style="background-color: #312f2feb;">
         <div class="big-picture">
           <img :src="getImageUrl(movieDetail.pic_url)">
@@ -28,7 +29,7 @@
                 <div>
                   <el-rate :value="movieDetail.score" :disabled="true" :max="5" class="star" />
                 </div>
-                  <div style="margin-top: 10px;">{{ movieDetail.score }}</div>
+                  <div style="margin-top: 10px;">评分：{{ movieDetail.score }}</div>
                 </div>
                 <div style="padding: 5px">上映时间：{{movieDetail.release_time}}</div>
                 <div style="padding: 5px">国家：{{movieDetail.country}}</div>
@@ -49,6 +50,7 @@
 <script>
 import { InfiniteScroll } from 'v-infinite-scroll';
 import Header from './Header.vue';
+import Float from './Float.vue';
 import Cookies from 'js-cookie'
 export default {
   name: "movieDetail",
@@ -189,6 +191,7 @@ export default {
   },
   components: {
     Header,
+    Float,
   },
   mounted() {
       // 获取路由参数中的id值

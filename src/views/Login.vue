@@ -58,6 +58,7 @@ import Vcode from "vue-puzzle-vcode";
 import md5 from 'js-md5';
 import $ from 'jquery'
 import localCookie from "@/lib/localCookie";
+import Cookies from "js-cookie";
 export default {
   name: 'HomeView',
   data() {
@@ -112,6 +113,11 @@ export default {
       }).then(
         (response) => {
           if (response.data.success == true) {
+            if(this.value == '管理员'){
+              Cookies.set('role', 1)
+            }else {
+              Cookies.set('role', 2)
+            }
             console.log("token:"+response.data.data)
             localStorage.setItem("token",response.data.data)
             $(".container1").css("display", "");

@@ -139,7 +139,7 @@
             </el-col>
             <el-col :span="2">
               <div class="grid-content bg-purple-dark">
-                <button @click="showAdd(reply.TOPIC_USER_ID,reply.TOPIC_USER_NAME)" type="button" class="Button FollowButton FEfUrdfMIKpQDJDqkjte Button&#45;&#45;primary Button&#45;&#45;blue epMJl0lFQuYbC7jrwr_o JmYzaky7MEPMFcJDLNMG">
+                <button @click="showAdd(reply.REPLY_USER_ID,reply.REPLY_USER_NAME)" type="button" class="Button FollowButton FEfUrdfMIKpQDJDqkjte Button&#45;&#45;primary Button&#45;&#45;blue epMJl0lFQuYbC7jrwr_o JmYzaky7MEPMFcJDLNMG">
                   回复
                 </button>
             </div>

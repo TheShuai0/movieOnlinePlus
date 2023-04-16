@@ -10,6 +10,8 @@ import MovieCollect from "@/views/MovieCollect.vue";
 import MovieRank from "@/views/MovieRank.vue";
 import Forum from "@/views/Forum.vue";
 import ForumDetail from "@/views/ForumDetail.vue";
+import Control from "@/views/Control.vue";
+import ForumControl from "@/views/ForumControl.vue";
 
 import $ from "jquery";
 
@@ -60,11 +62,20 @@ const routes = [
     path: '/forum',
     name: 'forum',
     component: Forum
-  },,{
+  },{
     path: '/forumDetail',
     name: 'forumDetail',
     component: ForumDetail
-  },
+  },{
+    path: '/control',
+    name: 'control',
+    component: Control
+  },{
+    path: '/forumControl',
+    name: 'forumControl',
+    component: ForumControl
+  }
+
 ]
 
 Vue.use(VueRouter)

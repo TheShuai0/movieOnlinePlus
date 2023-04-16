@@ -78,6 +78,7 @@ export default {
     }},
   methods: {
     chooseScore(){
+      console.log("dasda"+this.movieScoreShow)
       this.$axios({
         // 默认请求方式为get
         method: 'post',

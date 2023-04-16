@@ -9,6 +9,7 @@
       </el-submenu>
       <el-menu-item index="3" @click="gotoForum()">论坛</el-menu-item>
       <el-menu-item index="4" @click="gotoRank()">排行榜</el-menu-item>
+      <el-menu-item v-if="menuShow" index="5" @click="gotoControl()">管理</el-menu-item>
       <div id="select" class="jsx-1273643155 search-box show-suggestion">
         <input type="text" placeholder="喜剧 / 科幻 / 奇幻 / 古装 ..."
                class="jsx-1273643155 search-field" value="" v-model="searchMovie">
@@ -51,10 +52,13 @@
 import $ from "jquery";
 import {throttle} from "@/lib/utils";
 import { EventBus } from '@/Utils/EventBus';
+import Vcode from "vue-puzzle-vcode";
+import Cookies from "js-cookie";
 export default {
   name: "Header",
   data() {
     return {
+      menuShow:false,
       searchMovie: '',
       activeIndex: '1',
       typeList:[
@@ -85,6 +89,9 @@ export default {
     }
   },
   methods:{
+    gotoControl(){
+      this.$router.push('/control')
+    },
     gotoForum(){
       this.$router.push('/forum')
     },
@@ -203,6 +210,9 @@ export default {
   mounted() {
     this.getMovieType();
     this.getUserData();
+    if(Cookies.get("role") == 1){
+      this.menuShow = true;
+    }
   },
   computed: {
   },

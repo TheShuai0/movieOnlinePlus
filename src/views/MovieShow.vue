@@ -1,9 +1,13 @@
 <template>
   <div class="beijing">
     <div style="width: 80%;margin: 29px 8% auto;margin-top: 24px">
+      <div slot="header" class="clearfix" >
+            <span class="person_body_list" style="border-bottom: none;font-size: 52px;margin-left: 38%;"
+            >今日推荐</span>
+      </div>
       <el-carousel :interval="4000" type="card" height="240px;" style="overflow: hidden;">
-        <el-carousel-item v-for="item in movieLock" :key="item.url" style="margin-top: 3%;">
-          <img class="medium" :src="item.url" style="object-fit: fill;width: 100%;height: 100%" @click="imgDetail">
+        <el-carousel-item v-for="item in movieLock" :key="item.PIC_URL" style="margin-top:3%; ">
+          <img class="medium" :src="getImageUrl(item.PIC_URL)" style="object-fit: fill;width: 100%;height: 150%" @click="goToDetailPage(item.id)">
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -90,6 +94,27 @@ export default {
     };
   },
   methods: {
+    getTuijian(){
+      this.$axios({
+        // 默认请求方式为get
+        method: 'post',
+        url:"/user/tuijian",
+        responseType: 'json',
+        params:{token:localStorage.getItem("token")},
+        headers: {
+          'Content-Type': "application/json;charset=UTF-8",
+          'token': localStorage.getItem("token")
+        },
+      }).then(
+        (response) => {
+          if(response.data.code === "1101"){
+            console.log(response); // 用户已过期
+            alert(response.data.msg)
+            localStorage.removeItem("token")
+          }
+          this.movieLock = response.data.data
+        })
+    },
     goToDetailPage(movieId){
       Cookies.set('movieId', movieId, { expires: 0.02 })
       this.$router.push('/movieDetail')
@@ -147,6 +172,7 @@ export default {
   },
 
   mounted() {
+    this.getTuijian();
     this.getMovie();
     this.loadMore();
     window.addEventListener('scroll', () => {

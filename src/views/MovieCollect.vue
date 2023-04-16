@@ -5,7 +5,7 @@
   <div class="beijing">
     <div style="width: 80%;margin: 29px 8% auto;margin-top: 24px">
       <div class="PersonTop" style="margin-top: -7%;height: 94px;background-color: #ffffffb5">
-      <h1 style="height: 50px; margin: auto; text-align: center;">我的收藏夾</h1>
+      <h1 style="font-size:40px;height: 73px; margin: auto; text-align: center;" class="person_body_list">我的收藏夾</h1>
       </div>
     </div>
     <!--电影列表-->

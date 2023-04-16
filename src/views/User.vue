@@ -48,12 +48,14 @@
       <el-upload
         class="avatar-uploader"
         action="/movie/user/updatePic"
+        :show-file-list="false"
         :auto-upload="false"
         ref="upload"
-        :show-file-list="false"
         :on-success="handleAvatarSuccess"
-        :before-upload="beforeAvatarUpload">
-        <img v-if="imageUrl" :src="imageUrl" class="avatar" >
+        :before-upload="beforeAvatarUpload"
+        :on-change="changeAvatar"
+        >
+        <img v-if="imageUrl" :src="imageUrl" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
       <button @click="uploadAvatar">上传头像</button>
@@ -65,7 +67,7 @@
             <span class="person_body_list" style="border-bottom: none"
             >个人中心-我的主题帖</span>
           </div>
-          <ul class="infinite-list" v-infinite-scroll="load" style="overflow:auto;height: 378px;">
+          <ul class="infinite-list"  style="overflow:auto;height: 378px;">
             <li v-for="(forum, index) in myForumList" class="infinite-list-item" :key="index"
                 style="cursor: pointer;border-radius:17px;background-color: rgb(146 246 211 / 40%);margin: 7px;height: 58px" @click="goTOdetail(forum.ID)">
               <div class="forum-container">
@@ -77,7 +79,18 @@
         </el-card>
       </div>
       <div class="person_body_right" style="height: 450px;">
-
+        <div slot="header" class="clearfix" style="margin-left: 37%;margin-top: 13px;">
+            <span class="person_body_list" style="border-bottom: none"
+            >历史观影记录</span>
+        </div>
+        <div class=""style="height: 390px;overflow-y: auto;margin-top: 5px">
+          <el-col :span="4" v-for="(movie, index) in historyMovies" :key="index" style="height: 152px;">
+            <div class="movie" @click="goToDetailPage(movie.movieId)" style="cursor: pointer;">
+              <img :src="getImageUrl2(movie.pic_url)" alt="Movie poster" class="movie-poster">
+              <div class="movie-name">{{ movie.movieName }}</div>
+            </div>
+          </el-col>
+        </div>
       </div>
     </div>
 
@@ -126,11 +139,55 @@
 
 import Header from './Header.vue';
 import Float from "@/views/Float.vue";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export default {
   name: "userDetail",
   data() {
     return {
+      historyMovies: [
+        {
+          id:'1',
+          name: '门锁',
+          type: "爱情，奇幻",
+          pic_name: 'pic_16天.jpg',
+        },
+        {
+          id:'1',
+          name: '乌龙精神',
+          type: '奇幻，冒险，动作',
+          pic_name: 'pic_16天.jpg',
+        }, {
+          id:'1',
+          name: '古董局中局',
+          type: '爱情，喜剧',
+          pic_name: 'pic_16天.jpg',
+        },
+        {
+          id:'1',
+          name: '印度功夫',
+          type: '动作，喜剧，古装',
+          pic_name: 'pic_16天.jpg',
+        },
+        {
+          id:'1',
+          name: '独行月球',
+          type: '爱情，喜剧',
+          pic_name: 'pic_16天.jpg',
+        }, {
+          id:'1',
+          name: '天火',
+          type: '奇幻，喜剧',
+          pic_name: 'pic_16天.jpg',
+        },
+      ],
+      formData: {
+        token:'',
+        avatar: '',
+      },
+      imgtoken:localStorage.getItem("token"),
+      toheaders:{},
       showForm:false,
       ruleForm:{},
       myForumList:[{
@@ -165,6 +222,43 @@ export default {
   },
 
   methods: {
+    changeAvatar(file){
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    goToDetailPage(movieId){
+      Cookies.set('movieId', movieId, { expires: 0.02 })
+      this.$router.push('/movieDetail')
+    },
+    submitForm() {
+      let formData2 = new FormData()
+      formData2.append('token', localStorage.getItem("token"))
+      formData2.append('avatar', this.formData.avatar)
+      console.log(formData2)
+      this.$axios({
+        // 默认请求方式为get
+        method: 'post',
+        url:"/user/updatePic",
+        data:formData2,
+        responseType: 'json',
+        headers: {
+          'Content-Type': "multipart/form-data",
+          'token': localStorage.getItem("token")
+        },
+      }).then(
+        (response) => {
+          if(response.data.code === "1101"){
+            alert(response.data.msg)
+            localStorage.removeItem("token")
+          }
+          this.showForm = false;
+          this.$message({
+            showClose: true,
+            message: '修改成功',
+            type: 'success'
+          });
+          this.getUserDetail()
+        })
+    },
     changeInfo(){
       this.showForm=true
     },
@@ -230,7 +324,6 @@ export default {
             alert(response.data.msg)
             localStorage.removeItem("token")
           }
-          console.log("dsadasdas")
           this.showForm = false;
           this.$message({
             showClose: true,
@@ -276,19 +369,24 @@ export default {
         this.$refs.upload.submit();
     },
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.$message({
+        type: 'success',
+        message: '头像更改成功',
+      })
+      this.getUserDetail
     },
     beforeAvatarUpload(file) {
       const imgType = file.type ;
       const isLt2M = file.size / 1024 / 1024 < 2;
-      console.log("imgType"+imgType)
       if (imgType != "image/jpeg"&&imgType != "image/jpg"&&imgType != "image/png"&&imgType != "image/gif") {
         this.$message.error('上传头像图片只能是 JPEG,JPG,PNG,GIF 格式!');
+        return false
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!');
+        return false
       }
-      return  isLt2M;
+      return true
     },
     getImageUrl(user_img) {
       return require(`@/assets/user_img/${user_img}`)
@@ -349,9 +447,34 @@ export default {
             localStorage.removeItem("token")
           }
         })
-    }
+    },
+    getImageUrl2(pic_url) {
+      return require(`@/assets/images/${pic_url}`)
+    },
+    getMovieHistory(){
+      this.$axios({
+        // 默认请求方式为get
+        method: 'post',
+        url:"/user/getMovieHistory",
+        responseType: 'json',
+        params:{token:localStorage.getItem("token")},
+        headers: {
+          'Content-Type': "application/json;charset=UTF-8",
+          'token': localStorage.getItem("token")
+        },
+      }).then(
+        (response) => {
+          if(response.data.code === "1101"){
+            console.log(response); // 用户已过期
+            alert(response.data.msg)
+            localStorage.removeItem("token")
+          }
+          this.historyMovies = response.data.data;
+        })
+    },
   },
   mounted() {
+    this.getMovieHistory();
     this.getMyForum()
     this.getUserDetail()
     document.getElementById('select').style.display='none';
